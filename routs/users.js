@@ -3,11 +3,15 @@ const router = express.Router();
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const flash = require('express-flash'); 
+
+const User = require('../User'); 
 
 
-const User = require('../User'); // Import User model
+router.use(flash());
+
 router.use(cors({
-  origin: 'http://localhost:19006', // Replace with your React Native app's URL
+  origin: 'http://localhost:19006', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
@@ -21,14 +25,17 @@ router.post('/register', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user) {
+      req.flash('error', 'Email already exists'); 
       return res.status(400).json({ error: 'Email already exists' });
     }
 
     if (!name || !email || !password) {
+      req.flash('error', 'Please enter all fields'); 
       return res.status(400).json({ error: 'Please enter all fields' });
     }
 
     if (password.length < 6) {
+      req.flash('error', 'Password must be at least 6 characters'); 
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
@@ -42,6 +49,7 @@ router.post('/register', async (req, res) => {
     });
 
     await newUser.save();
+    req.flash('success', 'User registered successfully'); 
     res.json({ message: 'User registered successfully' });
   } catch (error) {
     console.error('Registration error:', error);
@@ -57,12 +65,14 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
+      req.flash('error', 'User not found'); 
       return res.status(404).json({ error: 'User not found' });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
+      req.flash('error', 'Invalid password'); 
       return res.status(401).json({ error: 'Invalid password' });
     }
 

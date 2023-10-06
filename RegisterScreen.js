@@ -1,11 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ImageBackground, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import axios from 'axios';
 
 const RegistrationScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [showMessage, setShowMessage] = useState(false);
+  const [messageType, setMessageType] = useState('');
+
+
+
+  // Function to fetch flash messages from the backend
+  
+
+
 
   const handleRegistration = async () => {
     try {
@@ -14,25 +32,42 @@ const RegistrationScreen = ({ navigation }) => {
         email,
         password,
       });
-      
-      
+
       if (response.data.message === 'User registered successfully') {
-        // Registration successful, navigate to the login screen
-        navigation.navigate('Login');
+        // Registration successful, show success message
+        setMessage('Registration successful');
+        setMessageType('success');
       }
     } catch (error) {
       console.error('Registration error:', error);
       // Handle the error here (you can display an error message to the user if needed)
+      setMessage('Registration failed');
+      setMessageType('error');
+    } finally {
+      // Show the flash message
+      setShowMessage(true);
     }
+    
   };
 
   return (
     <ImageBackground
-    source={require('./assets/background.png')}
+      source={require('./assets/background.png')}
       style={styles.backgroundImage}
     >
       <View style={styles.container}>
         <Text style={styles.title}>Registration</Text>
+        {showMessage && (
+          <Text
+            style={
+              messageType === 'error'
+                ? styles.errorMessage
+                : styles.successMessage
+            }
+          >
+            {message}
+          </Text>
+        )}
         <TextInput
           placeholder="Name"
           value={name}
@@ -53,6 +88,9 @@ const RegistrationScreen = ({ navigation }) => {
           style={styles.input}
         />
         <Button title="Register" onPress={handleRegistration} />
+        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
+          <Text style={styles.loginLink}>Already have an account? Login</Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -61,28 +99,43 @@ const RegistrationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover', // or 'stretch' for different effects
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Add a semi-transparent black overlay for better readability
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    padding: 20,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
-    color: 'white', // Text color
+    color: 'white',
   },
   input: {
-    width: '80%',
+    width: '100%',
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 20,
     padding: 10,
-    backgroundColor: 'white', // Input background color
-    borderRadius: 5, // Add some border radius for rounded corners
+    backgroundColor: 'white',
+    borderRadius: 5,
+  },
+  errorMessage: {
+    color: 'red',
+    marginBottom: 10,
+  },
+  successMessage: {
+    color: 'green',
+    marginBottom: 10,
+  },
+  loginLink: {
+    color: 'white',
+    textDecorationLine: 'underline',
+    marginTop: 10,
   },
 });
 
