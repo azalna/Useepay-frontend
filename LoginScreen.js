@@ -31,7 +31,6 @@ const LoginScreen = ({ navigation }) => {
   return (
     <ImageBackground
     source={require('./assets/background.png')}
-    // Replace with the path to your background image
       style={styles.backgroundImage}
     >
       <View style={styles.container}>
@@ -49,12 +48,19 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry
           style={styles.input}
         />
-        <Button title="Login" onPress={handleLogin} />
-
         <Button
-          title="Not registered? Register here"
+  title="Login"
+  onPress={handleLogin}
+  color="#ff6347" // Replace with your desired color code
+/>
+
+<Text
+          style={styles.registerText}
           onPress={navigateToRegistration}
-        />
+          color="red"
+        >
+          Not registered? Register here
+        </Text>
       </View>
     </ImageBackground>
   );
@@ -85,6 +91,10 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: 'white', // Input background color
     borderRadius: 5, // Add some border radius for rounded corners
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
 

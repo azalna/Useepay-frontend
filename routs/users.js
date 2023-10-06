@@ -1,7 +1,8 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 const cors = require('cors');
-
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 const User = require('../User'); // Import User model
@@ -12,68 +13,46 @@ router.use(cors({
   optionsSuccessStatus: 204,
 }));
 
-router.post('/register', (req,res) => {
-    const { name, email, password, } = req.body;
+router.post('/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
     console.log('Received registration data:', name, email, password);
-    let errors = [];
-  
-    if (!name || !email || !password  ) {
-      errors.push({ msg: 'Please enter all fields' });
-    }
-  
-    // if (password != ) {
-    //   errors.push({ msg: 'Passwords do not match' });
-    // }
-  
-    if (password.length < 6) {
-      errors.push({ msg: 'Password must be at least 6 characters' });
-    }
-  
-    if (errors.length > 0) {
-      res.render('register', {
-        errors,
-        name,
-        email,
-        password,
-        
-      });
-    } else {
-      User.findOne({ email: email }).then(user => {
-        if (user) {
-          errors.push({ msg: 'Email already exists' });
-          res.render('register', {
-            errors,
-            name,
-            email,
-            password,
-            
-          });
-        } else {
-          const newUser = new User({
-            name,
-            email,
-            password
-          });
-  
-          
-              newUser.save()
-                .then(user => {
-                  res.redirect('/users/login');
-                })
-                .catch(err => console.log(err));
-           
-         
-        }
-      });
-    }
-  });
- 
 
+    const user = await User.findOne({ email });
+
+    if (user) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Please enter all fields' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    await newUser.save();
+    res.json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log('Received  data:', email, password);
+    console.log('Received data for login:', email, password);
 
     const user = await User.findOne({ email });
 
@@ -88,7 +67,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Create and send a JWT token upon successful login
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY);
+    const token = jwt.sign({ userId: user._id }, 'your-secret-key'); // Replace with your actual secret key
     res.json({ token });
   } catch (error) {
     console.error('Error logging in:', error);
