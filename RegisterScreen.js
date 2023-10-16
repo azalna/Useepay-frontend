@@ -18,36 +18,29 @@ const RegistrationScreen = ({ navigation }) => {
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState('');
 
-
-
-  // Function to fetch flash messages from the backend
-  
-
-
-
   const handleRegistration = async () => {
     try {
       const response = await axios.post('http://localhost:3000/register', {
         name,
         email,
         password,
+        
+        
       });
 
+      console.log(response.data);
+
       if (response.data.message === 'User registered successfully') {
-        // Registration successful, show success message
         setMessage('Registration successful');
         setMessageType('success');
+        navigation.navigate('DashboardScreen');
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      // Handle the error here (you can display an error message to the user if needed)
       setMessage('Registration failed');
       setMessageType('error');
     } finally {
-      // Show the flash message
       setShowMessage(true);
     }
-    
   };
 
   return (
@@ -87,6 +80,8 @@ const RegistrationScreen = ({ navigation }) => {
           secureTextEntry
           style={styles.input}
         />
+       
+        
         <Button title="Register" onPress={handleRegistration} />
         <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
           <Text style={styles.loginLink}>Already have an account? Login</Text>

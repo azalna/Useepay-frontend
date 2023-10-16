@@ -4,6 +4,9 @@ mongoose.set('debug', true);
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const axios = require('axios'); 
+
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
@@ -16,8 +19,23 @@ app.use(cors({
   optionsSuccessStatus: 204,
 }));
 
-app.use(express.json());
 
+
+app.use(express.json());
+axios.interceptors.request.use(config => {
+  // Log the request or make modifications
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
+
+// Response interceptor
+axios.interceptors.response.use(response => {
+  // Log the response or make modifications
+  return response;
+}, error => {
+  return Promise.reject(error);
+});
 // Connect to your MongoDB database (Make sure you've configured db.js)
 const dbConnection = require('./db');
 

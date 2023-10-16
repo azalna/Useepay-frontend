@@ -5,22 +5,26 @@ const Userschema = new mongoose.Schema({
         type: String,
         required: true
     },
-    
     email: {
         type: String,
-        required: true
+        required: true,
+        
+  
     },
     password: {
         type: String,
         required: true
     },
     date: {
-        type: String,
+        type: Date,
         default: Date.now
     },
-    
-
-});
-
+    resetToken: {
+        type: String,
+    },
+    resetTokenExpiration: {
+        type: Date,
+    }
+})
 const User = mongoose.model('User',Userschema);
 module.exports = User;

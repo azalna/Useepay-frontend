@@ -28,6 +28,7 @@ const LoginScreen = ({ navigation }) => {
         // Login successful, show success message
         setMessage('Login successful');
         setMessageType('success');
+        navigation.navigate('DashboardScreen');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -42,7 +43,12 @@ const LoginScreen = ({ navigation }) => {
 
   const navigateToRegistration = () => {
     // Navigate to the RegisterScreen
-    navigation.navigate('RegisterScreen'); // Make sure this matches the name of your file
+    navigation.navigate('RegisterScreen');
+  };
+
+  const navigateToForgotPasswordScreen = () => {
+    // Navigate to the ForgotPasswordScreen
+    navigation.navigate('ForgotPasswordScreen');
   };
 
   return (
@@ -79,6 +85,9 @@ const LoginScreen = ({ navigation }) => {
         <Button title="Login" onPress={handleLogin} color="#ff6347" />
         <TouchableOpacity onPress={navigateToRegistration}>
           <Text style={styles.registerText}>Not registered? Register here</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={navigateToForgotPasswordScreen}>
+          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -122,6 +131,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   registerText: {
+    color: 'white',
+    textDecorationLine: 'underline',
+    marginTop: 10,
+  },
+  forgotPasswordText: {
     color: 'white',
     textDecorationLine: 'underline',
     marginTop: 10,
