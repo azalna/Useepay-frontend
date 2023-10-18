@@ -26,20 +26,7 @@ router.use(session({
   saveUninitialized: true
 }));
 
-axios.interceptors.request.use(config => {
-  // Log the request or make modifications
-  return config;
-}, error => {
-  return Promise.reject(error);
-});
 
-// Response interceptor
-axios.interceptors.response.use(response => {
-  // Log the response or make modifications
-  return response;
-}, error => {
-  return Promise.reject(error);
-});
 
 const crypto = require('crypto');
 
@@ -112,31 +99,28 @@ router.post('/reset-password', async (req, res) => {
   const { resetToken, password } = req.body;
 
   try {
-      // Find the user by the reset token and check if it's still valid
-      const user = await User.findOne({
-          resetToken,
-          resetTokenExpiration: { $gt: Date.now() },
-      });
+    const user = await User.findOne({
+      resetToken,
+      resetTokenExpiration: { $gt: Date.now() },
+    });
 
-      if (!user) {
-          return res.status(400).json({ message: 'Invalid or expired token' });
-      }
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
 
-      // Update the user's password
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-      user.password = hashedPassword;
-      user.resetToken = undefined; // Clear the reset token
-      user.resetTokenExpiration = undefined; // Clear the reset token expiration
-      await user.save();
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpiration = undefined;
+    await user.save();
 
-      return res.json({ message: 'Password reset successfully' });
+    return res.json({ message: 'Password reset successfully' });
   } catch (error) {
-      console.error('Password reset error:', error);
-      return res.status(500).json({ error: 'An error occurred' });
+    console.error('Error resetting the password:', error); // Log the error
+    return res.status(500).json({ message: 'Failed to reset the password' });
   }
 });
-
 
 
 

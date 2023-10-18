@@ -25,6 +25,7 @@ const ResetPasswordScreen = () => {
 
       if (response.data.message === 'Password reset successfully') {
         setMessage('Password reset successfully');
+        navigation.navigate("DashboardScreen")
       } else {
         setMessage('Failed to reset the password');
       }

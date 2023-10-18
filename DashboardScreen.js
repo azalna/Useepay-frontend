@@ -1,61 +1,44 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Image, Modal, Pressable } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import ProfileIcon from './assets/profile.png';
 
-const DashboardScreen = ({ navigation }) => {
-    const [menuVisible, setMenuVisible] = useState(false);
-  
-    const toggleMenu = () => {
-      setMenuVisible(!menuVisible);
-    };
-  
-    const handleButton1Click = () => {
-      // Do something when Button 1 is clicked
-    };
-  
-    const handleButton2Click = () => {
-      // Do something when Button 2 is clicked
-    };
-  
-    const handleLogout = () => {
-      // Add your logout logic here (e.g., clearing tokens or user data)
-      // After logging out, navigate to the login screen
-      navigation.replace('LoginScreen'); // Use replace to prevent going back to the dashboard
-    };
-  
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Mining Dashboard</Text>
-          <TouchableOpacity onPress={handleLogout}>
-            <Text style={styles.logoutButton}>Logout</Text>
-          </TouchableOpacity>
-      </View>
-      <TouchableOpacity onPress={toggleMenu} style={styles.menuButton}>
-        <Text style={styles.menuButtonText}>...</Text>
-      </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={menuVisible}
-        onRequestClose={() => {
-          setMenuVisible(!menuVisible);
-        }}
-      >
-        <View style={styles.menuModal}>
-          <Pressable onPress={toggleMenu} style={styles.menuCloseButton}>
-            <Text style={styles.menuCloseButtonText}>Close</Text>
-          </Pressable>
-          <View style={styles.menuContent}>
-          <Button title="profile" onPress={() => {/* Handle Help */}} />
-          <Button title="Wallet" onPress={() => {/* Handle Help */}} />
-          <Button title="Staking" onPress={() => {/* Handle Help */}} />
-          <Button title="Rewards" onPress={() => {/* Handle Help */}} />
-            <Button title="Settings" onPress={() => {/* Handle Settings */}} />
-            <Button title="Help" onPress={() => {/* Handle Help */}} />
-            {/* Add more menu items as needed */}
-          </View>
-        </View>
-      </Modal>
+const DashboardScreen = () => {
+  const navigation = useNavigation();
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [isMining, setIsMining] = useState(false); // Added state for mining toggle
+
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const toggleMining = () => {
+    setIsMining(!isMining);
+  };
+
+  const handleButton1Click = () => {
+    // Do something when Button 1 is clicked
+  };
+
+  const handleButton2Click = () => {
+    // Do something when Button 2 is clicked
+  };
+
+  const handleLogout = () => {
+    // Implement your logout logic here
+    // After logging out, navigate to the login screen
+    navigation.replace('LoginScreen');
+  };
+
+  const isSmallDevice = Dimensions.get('window').width < 375;
+
+  const handleProfileClick = () => {
+    // Navigate to the ProfileScreen
+    navigation.navigate('ProfileScreen');
+  };
+
+  return (
+    <View style={styles.container}>
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Mining Speed</Text>
@@ -67,9 +50,27 @@ const DashboardScreen = ({ navigation }) => {
         </View>
       </View>
       <View style={styles.buttonsContainer}>
+      
+        <Button title="Invite Friends" onPress={handleButton2Click} color="#ff8397" />
+      </View>
+      <View style={styles.buttonsContainer}>
         <Button title="Start Mining" onPress={handleButton1Click} />
         <Button title="Stop Mining" onPress={handleButton2Click} color="#ff6347" />
       </View>
+      <View style={styles.bottomButtons}>
+        <TouchableOpacity onPress={toggleMenu}>
+          <Text style={styles.bottomButtonText}>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={toggleMenu}>
+          <Text style={styles.bottomButtonText}>Wallet</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={isMining ? toggleMining : handleLogout}>
+          <Text style={styles.bottomButtonText}>{isMining ? 'Stop Mining' : 'Logout'}</Text>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity onPress={handleProfileClick} style={styles.profileIconContainer}>
+        <Image source={ProfileIcon} style={[styles.profileIcon, isSmallDevice && styles.smallDeviceProfileIcon]} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -78,57 +79,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f0f0f0',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-    position: 'relative',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  logoutButton: {
-    color: 'blue',
-    textDecorationLine: 'underline',
-    position: 'absolute',
-    top: 16,    // Adjust the top position as needed
-    right: 16,  // Adjust the right position as needed
-  },
-  menuButton: {
-    position: 'absolute',
-    left: 16,
-    top: 16,
-  },
-  menuButtonText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  menuModal: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  menuCloseButton: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    backgroundColor: 'white',
-    padding: 8,
-    borderRadius: 4,
-  },
-  menuCloseButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  menuContent: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: '#f0f0',
+    justifyContent: 'space-between',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -138,9 +90,10 @@ const styles = StyleSheet.create({
   statItem: {
     backgroundColor: 'white',
     padding: 16,
+    marginTop: 50,
     borderRadius: 8,
     flex: 1,
-    marginRight: 16,
+    marginRight: 8,
   },
   statLabel: {
     fontSize: 16,
@@ -152,6 +105,30 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     marginBottom: 20,
+  },
+  bottomButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+  },
+  bottomButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  profileIconContainer: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+  },
+  profileIcon: {
+    width: 50,
+    height: 50,
+  },
+  smallDeviceProfileIcon: {
+    width: 20,
+    height: 20,
   },
 });
 

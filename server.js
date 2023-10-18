@@ -39,6 +39,9 @@ axios.interceptors.response.use(response => {
 // Connect to your MongoDB database (Make sure you've configured db.js)
 const dbConnection = require('./db');
 
+// const userRout=require('./routs/users')
+// app.use('/api/users' ,userRout);
+
 app.use('/', require("./routs/users"));
 
 

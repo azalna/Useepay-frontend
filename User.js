@@ -15,16 +15,19 @@ const Userschema = new mongoose.Schema({
         type: String,
         required: true
     },
+  
+    resetToken: {
+        type: String,
+     
+    },
+    resetTokenExpiration: {
+        type: Date,
+       
+    },
     date: {
         type: Date,
         default: Date.now
     },
-    resetToken: {
-        type: String,
-    },
-    resetTokenExpiration: {
-        type: Date,
-    }
 })
 const User = mongoose.model('User',Userschema);
 module.exports = User;
