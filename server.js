@@ -42,7 +42,7 @@ const dbConnection = require('./db');
 // const userRout=require('./routs/users')
 // app.use('/api/users' ,userRout);
 
-app.use('/', require("./routs/users"));
+app.use('/', require("./routes/users"));
 
 
 app.listen(port, () => {

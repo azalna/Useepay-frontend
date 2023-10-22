@@ -9,6 +9,7 @@ import DashboardScreen from './DashboardScreen';
 import ForgotPasswordScreen from './ForgotPasswordScreen';
 import ResetPasswordScreen from './ResetPasswordScreen';
 import ProfileScreen from "./ProfileScreen";
+import ReferralScreen from './ReferralScreen';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,8 @@ function App() {
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="ReferralScreen" component={ReferralScreen} options={{ headerShown: false }} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

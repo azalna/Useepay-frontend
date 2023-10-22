@@ -1,3 +1,4 @@
+// RegistrationScreen.js
 import React, { useState } from 'react';
 import {
   View,
@@ -14,6 +15,7 @@ const RegistrationScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [referredBy, setReferredBy] = useState('');
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState('');
@@ -24,8 +26,7 @@ const RegistrationScreen = ({ navigation }) => {
         name,
         email,
         password,
-        
-        
+        referredBy,
       });
 
       console.log(response.data);
@@ -80,8 +81,12 @@ const RegistrationScreen = ({ navigation }) => {
           secureTextEntry
           style={styles.input}
         />
-       
-        
+        <TextInput
+          placeholder="Referral Code (If Any)"
+          value={referredBy}
+          onChangeText={setReferredBy}
+          style={styles.input}
+        />
         <Button title="Register" onPress={handleRegistration} />
         <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
           <Text style={styles.loginLink}>Already have an account? Login</Text>

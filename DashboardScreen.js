@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ProfileIcon from './assets/profile.png';
 
@@ -37,6 +45,11 @@ const DashboardScreen = () => {
     navigation.navigate('ProfileScreen');
   };
 
+  // Handle the "Invite Friends" button click
+  const handleInviteFriends = () => {
+    navigation.navigate('ReferralScreen');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.statsContainer}>
@@ -50,8 +63,7 @@ const DashboardScreen = () => {
         </View>
       </View>
       <View style={styles.buttonsContainer}>
-      
-        <Button title="Invite Friends" onPress={handleButton2Click} color="#ff8397" />
+        <Button title="Invite Friends" onPress={handleInviteFriends} color="#ff8397" />
       </View>
       <View style={styles.buttonsContainer}>
         <Button title="Start Mining" onPress={handleButton1Click} />
@@ -65,7 +77,9 @@ const DashboardScreen = () => {
           <Text style={styles.bottomButtonText}>Wallet</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={isMining ? toggleMining : handleLogout}>
-          <Text style={styles.bottomButtonText}>{isMining ? 'Stop Mining' : 'Logout'}</Text>
+          <Text style={styles.bottomButtonText}>
+            {isMining ? 'Stop Mining' : 'Logout'}
+          </Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity onPress={handleProfileClick} style={styles.profileIconContainer}>

@@ -5,7 +5,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
-const User = require('../User');
+const User = require('../models/User');
 const flash = require('express-flash');
 const axios = require('axios'); 
 const nodemailer = require('nodemailer');
@@ -21,7 +21,7 @@ router.use(cors({
 }));
 
 router.use(session({
-  secret: 'your-secret-key', // Replace with a secret key for session management
+  secret: 'your-secret-key', 
   resave: false,
   saveUninitialized: true
 }));
@@ -117,7 +117,7 @@ router.post('/reset-password', async (req, res) => {
 
     return res.json({ message: 'Password reset successfully' });
   } catch (error) {
-    console.error('Error resetting the password:', error); // Log the error
+    console.error('Error resetting the password:', error); 
     return res.status(500).json({ message: 'Failed to reset the password' });
   }
 });
@@ -129,23 +129,23 @@ router.post('/reset-password', async (req, res) => {
 
 
 router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
-  console.log('Received registration data:', name, email, password);
+  const { name, email, password,referredBy,referralCode} = req.body;
+  console.log('Received registration data:', name, email, password,referredBy);
 
   if (!name || !email || !password) {
     req.flash('error', 'Please enter all fields'); 
     return res.status(400).json({ error: 'Please enter all fields' });
   }
 
-  // Include the verifyEmail function here
+
   const verifyEmail = async (email) => {
     const apiKey = process.env.EMAIL_API_KEY;
     try {
       const response = await axios.get(`https://api.zerobounce.net/v2/validate?apikey=${apiKey}&email=${email}`);
       
-      // Check the response from ZeroBounce for verification results
+   
       const data = response.data;
-      console.log('ZeroBounce API Response:', data); // Add this line for debugging
+      console.log('ZeroBounce API Response:', data);
     
       if (data.status === 'valid') {
         console.log(`Email ${email} is valid.`);
@@ -184,23 +184,51 @@ router.post('/register', async (req, res) => {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    // const referralCode = generateReferralCode();
+
+   
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
+      // referralCode, 
+      referredBy
     });
 
+    if (referredBy) {
+    //if there is an referal add to the referal points array
+
+      const referrer = await User.findById(referredBy);
+      if (referrer) {
+        referrer.referralPoints.push(newUser._id); 
+        await referrer.save();
+      }
+    }
     await newUser.save();
-    req.flash('success', 'User registered successfully'); 
-    res.json({ message: 'User registered successfully' });
+
+
+    newUser.referralLink = `http://localhost:19006/register?ref=${newUser._id}`;
+
+    await newUser.save();
+
+    req.flash('success', 'User registered successfully');
+    return res.json({ message: 'User registered successfully' });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'An error occurred' });
+    return res.status(500).json({ error: 'An error occurred' });
   }
 });
 
-
-
+// // Function to generate a unique referral code
+// const generateReferralCode = () => {
+//   const length = 8;
+//   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//   let code = '';
+//   for (let i = 0; i < length; i++) {
+//     code += characters.charAt(Math.floor(Math.random() * characters.length));
+//   }
+//   return code;
+// };
 
 
 router.post('/login', async (req, res) => {
