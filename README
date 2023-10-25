@@ -1,0 +1,21 @@
+# Quickstart
+
+1- Clone and install dependencies 
+
+git clone https://github.com/azalna/Useepay-frontend.git
+
+Then 
+
+npm i  or yarn i
+
+
+2-Run the server-side 
+
+node server.js
+
+
+3-Run the frontend
+
+npm start
+
+*run in web instead of others , some issues while running in mobile(expo go)*
